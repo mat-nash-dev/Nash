@@ -1,3 +1,4 @@
+.
 # Project Walkthrough & Deployment Guide
 
 This document outlines how to set up, build, and deploy this project to **GitHub Pages**, as well as how to configure the backend on **Supabase**.
