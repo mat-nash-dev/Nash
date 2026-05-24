@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MatNashPlays | Developer & Creator Preview</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            background: '#030014',
+            primary: '#a855f7',
+            accent: '#06b6d4',
+            border: 'rgba(255, 255, 255, 0.08)',
+          },
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            display: ['Space Grotesk', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Premium Animations & Glows */
+    body {
+      background-color: #030014;
+      overflow-x: hidden;
+    }
+    
+    .glass {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    
+    .glass-strong {
+      background: rgba(3, 0, 20, 0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Aurora Glow Elements */
+    .aurora-bg {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      filter: blur(150px);
+      z-index: 0;
+      opacity: 0.15;
+      pointer-events: none;
+    }
+    
+    .aurora-1 {
+      background: radial-gradient(circle, #a855f7 0%, transparent 70%);
+      top: -10%;
+      left: -10%;
+    }
+    
+    .aurora-2 {
+      background: radial-gradient(circle, #06b6d4 0%, transparent 70%);
+      bottom: -10%;
+      right: -10%;
+    }
+
+    /* Animated Aurora text */
+    .aurora-text-container {
+      position: relative;
+      background: linear-gradient(135deg, #a855f7, #c084fc, #06b6d4, #a855f7);
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: auroraFlow 8s ease infinite;
+    }
+    
+    @keyframes auroraFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Spinner style */
+    .nash-spinner {
+      border: 3px solid transparent;
+      border-top-color: #a855f7;
+      border-bottom-color: #06b6d4;
+      border-radius: 50%;
+      animation: spin 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Hide scrollbar completely during preloading */
+    .no-scroll {
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    /* Cinematic transition classes */
+    .fade-up-element {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .fade-up-element.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* PFP Flight Path */
+    #flying-pfp {
+      position: fixed;
+      z-index: 100;
+      pointer-events: none;
+      transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    /* Active view state */
+    .page-section {
+      display: none;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .page-section.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes marquee {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-50%); }
+    }
+    .animate-marquee {
+      animation: marquee 30s linear infinite;
+    }
+    .animate-marquee:hover {
+      animation-play-state: paused;
+    }
+  </style>
+</head>
+<body class="text-slate-200 font-sans min-h-screen relative no-scroll">
+
+  <!-- Background Auroras -->
+  <div class="aurora-bg aurora-1"></div>
+  <div class="aurora-bg aurora-2"></div>
+
+  <!-- 1. CINEMATIC PRELOADER -->
+  <div id="preloader" class="fixed inset-0 bg-background z-[999] flex flex-col items-center justify-center transition-all duration-1000">
+    <div class="relative flex items-center justify-center w-48 h-48">
+      
+      <!-- Central PFP (Starts here inside Preloader circle) -->
+      <div id="pfp-container-initial" class="w-32 h-32 rounded-full overflow-hidden p-1 bg-gradient-to-br from-primary to-accent relative z-10 transition-transform duration-500 scale-100">
+        <img 
+          src="https://github.com/NashCodes77/Regis/blob/main/images/matnashplays.png?raw=true" 
+          alt="MatNashPlays PFP" 
+          class="w-full h-full rounded-full object-cover"
+        />
+      </div>
+
+      <!-- Outermost spinning accents -->
+      <div class="absolute inset-0 nash-spinner"></div>
+    </div>
+    
+    <div class="mt-8 text-center">
+      <h2 class="text-2xl font-bold font-display uppercase tracking-widest text-gradient bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">NASH</h2>
+      <p id="preloader-status" class="text-xs text-slate-400 font-mono mt-2 uppercase tracking-wider">Syncing with database...</p>
+    </div>
+    
+    <!-- Timeout warnings -->
+    <div id="timeout-warning" class="hidden absolute bottom-10 left-1/2 -translate-x-1/2 max-w-sm glass p-4 rounded-xl text-center border-red-500/20 text-xs">
+      <p class="text-amber-400 font-bold mb-1">⚠️ Connection takes longer than usual...</p>
+      <p class="text-slate-400">It seems the internet is really bad for you today! Or maybe there is an issue with the server.</p>
+    </div>
+  </div>
+
+  <!-- 2. FLYING PFP CONTAINER (Used during transition) -->
+  <div id="flying-pfp" class="hidden rounded-full overflow-hidden p-1 bg-gradient-to-br from-primary to-accent">
+    <img 
+      src="https://github.com/NashCodes77/Regis/blob/main/images/matnashplays.png?raw=true" 
+      alt="Flying MatNashPlays" 
+      class="w-full h-full rounded-full object-cover"
+    />
+  </div>
+
+  <!-- 3. MAIN WEBSITE WRAPPER (Initially invisible) -->
+  <div id="app-content" class="opacity-0 transition-opacity duration-1000 min-h-screen flex flex-col pt-20">
+    
+    <!-- HEADER / NAVIGATION -->
+    <header class="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-border">
+      <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        
+        <!-- Logo / Left PFP -->
+        <a href="#" onclick="navigateTo('home'); return false;" class="flex items-center gap-3 group">
+          <div class="relative w-9 h-9">
+            <img 
+              src="https://github.com/NashCodes77/Regis/blob/main/images/matnashplays.png?raw=true" 
+              alt="Logo PFP" 
+              class="w-full h-full rounded-full object-cover ring-2 ring-primary/60 group-hover:ring-primary transition-all duration-300"
+            />
+            <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-background" />
+          </div>
+          <span class="text-xl font-bold tracking-tight text-gradient bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent font-display">MatNash</span>
+        </a>
+
+        <!-- Desktop Navigation Menu -->
+        <nav class="hidden md:flex items-center gap-1.5">
+          <button onclick="navigateTo('home')" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-white/5 active-nav" data-page="home">Home</button>
+          <button onclick="navigateTo('work')" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-white/5" data-page="work">Work</button>
+          <button onclick="navigateTo('projects')" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-white/5" data-page="projects">Projects</button>
+          <button onclick="navigateTo('contact')" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-white/5" data-page="contact">Contact Me</button>
+          <button onclick="navigateTo('join')" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-white/5" data-page="join">Join My Server</button>
+        </nav>
+
+        <!-- Right Side Controls / User Info -->
+        <div class="flex items-center gap-4">
+          <button onclick="navigateTo('admin')" class="px-3.5 py-1.5 rounded-lg border border-primary/40 text-primary hover:bg-primary/10 text-xs font-semibold flex items-center gap-1.5 transition-colors">
+            <i data-lucide="shield" class="w-3.5 h-3.5"></i> Admin panel
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN BODY SECTIONS -->
+    <main class="flex-1 max-w-7xl mx-auto px-6 w-full relative z-10 flex flex-col justify-center">
+
+      <!-- SECTION: HOME -->
+      <section id="page-home" class="page-section active py-12">
+        <div class="flex flex-col justify-center max-w-3xl">
+          
+          <!-- Avatar Target Spot (PFP flies into here) -->
+          <div id="pfp-target-spot" class="w-32 h-32 md:w-40 md:h-40 rounded-full mb-8 relative">
+            <!-- Blank placeholder during loading, filled automatically on launch -->
+            <div id="hero-pfp-placeholder" class="w-full h-full rounded-full bg-slate-800/20 border border-slate-700/30"></div>
+          </div>
+
+          <div class="fade-up-element active-stagger">
+            <h1 class="text-5xl md:text-7xl font-black font-display tracking-tight leading-tight mb-4 text-white">
+              Hi, I'm <span class="aurora-text-container font-black drop-shadow-[0_0_20px_rgba(168,85,247,0.3)]" id="cms-title">MatNashPlays</span>
+            </h1>
+          </div>
+
+          <div class="fade-up-element active-stagger delay-100">
+            <h2 class="text-2xl md:text-3xl mb-6 font-medium text-slate-300 font-display flex items-center gap-2">
+              <span id="cms-tagline">Developer & Hobbyist</span>
+            </h2>
+          </div>
+
+          <div class="fade-up-element active-stagger delay-200">
+            <p id="cms-description" class="text-lg text-slate-400 leading-relaxed mb-10 max-w-2xl font-light">
+              I build custom systems, high-tier Discord interfaces, and interactive online portfolios. Explore my professional catalog or edit this site contents in real time using the custom sandbox CMS.
+            </p>
+          </div>
+
+          <div class="fade-up-element active-stagger delay-300 flex flex-wrap gap-4 mb-12">
+            <button onclick="navigateTo('work')" class="bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-xl font-bold transition-all duration-300 hover:scale-105 shadow-lg shadow-primary/20 flex items-center gap-2">
+              My Services <i data-lucide="briefcase" class="w-5 h-5"></i>
+            </button>
+            <button onclick="navigateTo('projects')" class="glass hover:bg-white/5 text-white px-8 py-4 rounded-xl font-bold transition-all duration-300 hover:scale-105 flex items-center gap-2">
+              Portfolio Projects <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </button>
+            <button onclick="navigateTo('contact')" class="glass hover:bg-white/5 text-slate-300 px-8 py-4 rounded-xl font-bold transition-all duration-300 hover:scale-105">
+              Contact Me
+            </button>
+          </div>
+
+          <div class="fade-up-element active-stagger delay-400 flex gap-4">
+            <a href="#" class="text-slate-400 hover:text-primary transition-colors glass p-3.5 rounded-full"><i data-lucide="code-2" class="w-5 h-5"></i></a>
+            <a href="#" class="text-slate-400 hover:text-primary transition-colors glass p-3.5 rounded-full"><i data-lucide="message-square" class="w-5 h-5"></i></a>
+            <a href="#" class="text-slate-400 hover:text-primary transition-colors glass p-3.5 rounded-full"><i data-lucide="terminal" class="w-5 h-5"></i></a>
+          </div>
+        </div>
+
+        <!-- Infinite Scrolling Reviews Marquee -->
+        <div class="fade-up-element active-stagger delay-500 w-full mt-16 overflow-hidden relative py-6 border-t border-white/5">
+          <div class="flex items-center justify-between mb-6 px-2">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
+              <h3 class="text-xl font-bold font-display text-white">Server Reviews</h3>
+            </div>
+          </div>
+
+          <div class="w-full overflow-hidden relative select-none">
+            <div class="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-[#030014] to-transparent z-10 pointer-events-none"></div>
+            <div class="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-[#030014] to-transparent z-10 pointer-events-none"></div>
+
+            <div class="flex gap-6 w-max animate-marquee" id="reviews-marquee-track">
+              <!-- Dynamically filled by script -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: WORK & SERVICES -->
+      <section id="page-work" class="page-section py-12">
+        <div class="text-center mb-16 max-w-2xl mx-auto">
+          <h1 class="text-4xl md:text-6xl font-black font-display tracking-tight text-white mb-4">My <span class="aurora-text-container">Work & Services</span></h1>
+          <p class="text-slate-400 text-base font-light">Custom software developer offering highly optimized, high-fidelity services with zero deployment bottlenecks.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16" id="services-container">
+          <!-- Dynamically filled by script -->
+        </div>
+
+        <div class="max-w-4xl mx-auto text-center" id="work-footer-container">
+          <!-- Dynamic footer banner -->
+        </div>
+      </section>
+
+      <!-- SECTION: PROJECTS -->
+      <section id="page-projects" class="page-section py-12">
+        <div class="text-center mb-16 max-w-2xl mx-auto">
+          <h1 class="text-4xl md:text-6xl font-black font-display tracking-tight text-white mb-4">Portfolio <span class="aurora-text-container">Projects</span></h1>
+          <p class="text-slate-400 text-base font-light">Explore a production-ready collection of my open-source utility systems, interactive WebApps, and bot frameworks.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16" id="projects-grid">
+          <!-- Dynamically filled by script -->
+        </div>
+      </section>
+
+
+
+      <!-- SECTION: CONTACT ME -->
+      <section id="page-contact" class="page-section py-12">
+        <div class="max-w-4xl mx-auto glass p-8 md:p-12 rounded-3xl border border-white/10 glow-border relative overflow-hidden">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div>
+              <h2 class="text-3xl md:text-4xl font-extrabold font-display text-white mb-4">Let's build <span class="aurora-text-container">something epic</span></h2>
+              <p class="text-slate-400 text-sm leading-relaxed mb-8">Drop me a message directly, ask a technical question, or request a custom quote. I will get back to you inside 24 hours.</p>
+              
+              <div class="space-y-4">
+                <div class="flex items-center gap-4 text-sm text-slate-300">
+                  <div class="p-2.5 glass rounded-xl text-primary"><i data-lucide="mail" class="w-4 h-4"></i></div>
+                  <span>contact@matnashplays.dev</span>
+                </div>
+                <div class="flex items-center gap-4 text-sm text-slate-300">
+                  <div class="p-2.5 glass rounded-xl text-accent"><i data-lucide="message-square" class="w-4 h-4"></i></div>
+                  <span>Discord ID: matnash</span>
+                </div>
+              </div>
+            </div>
+
+            <form onsubmit="handleContactSubmit(event)" class="space-y-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Full Name</label>
+                <input type="text" required class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/50 transition-colors" placeholder="Steve Rogers">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Email Address</label>
+                <input type="email" required class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/50 transition-colors" placeholder="steve@shield.gov">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Message</label>
+                <textarea required rows="4" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/50 transition-colors" placeholder="Explain your custom requirements..."></textarea>
+              </div>
+              <button type="submit" class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-primary/20">
+                Send Message <i data-lucide="send" class="w-4 h-4"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: JOIN MY SERVER -->
+      <section id="page-join" class="page-section py-12">
+        <div class="max-w-2xl mx-auto glass p-10 rounded-3xl border border-white/10 text-center relative overflow-hidden">
+          <div class="absolute -top-16 -left-16 w-32 h-32 bg-primary/20 rounded-full filter blur-xl"></div>
+          <div class="absolute -bottom-16 -right-16 w-32 h-32 bg-accent/20 rounded-full filter blur-xl"></div>
+          
+          <i data-lucide="users" class="w-12 h-12 text-primary mx-auto mb-6"></i>
+          <h2 class="text-3xl md:text-4xl font-black font-display text-white mb-4">Join my Discord community</h2>
+          <p class="text-slate-400 text-sm leading-relaxed mb-8">Access dedicated developer resources, receive direct beta testing notifications for my Discord bot systems, and chat with fellow designers.</p>
+          
+          <a href="https://discord.gg/matnashplays" target="_blank" class="inline-flex items-center gap-2 bg-[#5865F2] hover:bg-[#4752C4] text-white px-8 py-4 rounded-xl font-bold transition-all duration-300 hover:scale-105 shadow-lg shadow-indigo-500/20">
+            Connect to Server <i data-lucide="external-link" class="w-4 h-4"></i>
+          </a>
+        </div>
+      </section>
+
+      <!-- SECTION: ADMIN PANEL (SANDBOXED INTERACTIVE CMS) -->
+      <section id="page-admin" class="page-section py-12">
+        <div class="text-center mb-8 max-w-2xl mx-auto">
+          <h1 class="text-4xl md:text-5xl font-black font-display tracking-tight text-white mb-2">Sandbox <span class="aurora-text-container">Admin Panel</span></h1>
+          <p class="text-slate-400 text-sm font-light">Interactive simulator. Modifying fields here will instantly re-render the preview homepage live!</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
+          <!-- Stats card col -->
+          <div class="lg:col-span-1 space-y-6">
+            <div class="glass p-6 rounded-2xl border border-white/10 glow-border">
+              <h3 class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">Total Visitors (Simulated)</h3>
+              <div class="text-4xl font-black text-white" id="admin-stat-visitors">147</div>
+            </div>
+            
+            <div class="glass p-6 rounded-2xl border border-white/10 glow-border">
+              <h3 class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">Active Database Key</h3>
+              <div class="text-sm font-mono text-emerald-400 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                SUPABASE_CONNECTED
+              </div>
+            </div>
+
+            <div class="glass p-6 rounded-2xl border border-white/10">
+              <h3 class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-4">Audited Visits</h3>
+              <div class="space-y-3 font-mono text-xs text-slate-300">
+                <div class="flex justify-between border-b border-white/5 pb-2">
+                  <span class="text-primary">192.168.1.45</span>
+                  <span>(You - Admin)</span>
+                </div>
+                <div class="flex justify-between border-b border-white/5 pb-2">
+                  <span class="text-slate-400">188.42.12.199</span>
+                  <span>United States</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-400">92.203.41.8</span>
+                  <span>United Kingdom</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CMS Editor forms -->
+          <div class="lg:col-span-2 glass p-8 rounded-3xl border border-white/10 space-y-6">
+            <h3 class="text-xl font-bold font-display text-white">Live Hero Content Customization</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Display Name</label>
+                <input type="text" id="editor-title" oninput="updateHeroPreview()" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/50 text-white font-semibold">
+              </div>
+              
+              <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Subheadline / Tagline</label>
+                <input type="text" id="editor-tagline" oninput="updateHeroPreview()" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/50 text-white font-semibold">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Bio / Narrative Description</label>
+              <textarea id="editor-desc" rows="4" oninput="updateHeroPreview()" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/50 text-white font-light"></textarea>
+            </div>
+
+            <div class="border-t border-white/10 pt-6">
+              <h3 class="text-xl font-bold font-display text-white mb-4">Manage Custom Services (JSON format)</h3>
+              <textarea id="editor-services-json" rows="8" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-xs font-mono text-emerald-400 focus:outline-none focus:border-primary/50"></textarea>
+              
+              <button onclick="saveServicesFromAdmin()" class="mt-4 bg-primary hover:bg-primary/90 text-white px-6 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 flex items-center gap-2">
+                Apply Services Update <i data-lucide="check" class="w-4 h-4"></i>
+              </button>
+            </div>
+
+            <div class="border-t border-white/10 pt-6">
+              <h3 class="text-xl font-bold font-display text-white mb-4">Manage Server Reviews</h3>
+              <div id="admin-reviews-list" class="space-y-4 max-h-[300px] overflow-y-auto pr-2 mb-6">
+                <!-- Dynamically filled by script -->
+              </div>
+
+              <!-- Edit Review Inline Form (Hidden by default) -->
+              <div id="admin-edit-review-form" class="hidden p-6 bg-white/5 border border-white/10 rounded-2xl space-y-4 animate-fade-in">
+                <h4 class="text-sm font-bold text-white flex items-center gap-1.5"><i data-lucide="edit" class="w-4 h-4 text-primary"></i> Edit Review</h4>
+                <input type="hidden" id="edit-review-id">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Rating</label>
+                  <select id="edit-review-rating" class="bg-black border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-primary/50">
+                    <option value="5">5 Stars</option>
+                    <option value="4">4 Stars</option>
+                    <option value="3">3 Stars</option>
+                    <option value="2">2 Stars</option>
+                    <option value="1">1 Star</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Content</label>
+                  <textarea id="edit-review-content" rows="3" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/50 text-white" placeholder="Review content..."></textarea>
+                </div>
+                <div class="flex gap-2">
+                  <button onclick="saveReviewFromAdmin()" class="bg-primary hover:bg-primary/90 text-white px-5 py-2 rounded-xl text-xs font-bold transition-all">Save Changes</button>
+                  <button onclick="cancelEditReviewFromAdmin()" class="glass hover:bg-white/5 text-slate-400 px-5 py-2 rounded-xl text-xs font-bold transition-all">Cancel</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-border mt-20 py-8 relative z-10 glass-strong">
+      <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <p class="text-xs text-slate-500 font-light">© 2026 MatNashPlays. Built with premium custom components.</p>
+        <div class="flex items-center gap-6">
+          <a href="#" onclick="navigateTo('home'); return false;" class="text-xs text-slate-400 hover:text-primary transition-colors">Back to top</a>
+          <a href="#" class="text-xs text-slate-400 hover:text-primary transition-colors">Privacy & Legal</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- POPUP NOTIFICATION (Simulating Ordinal suffix display on entry) -->
+  <div id="visit-toast" class="fixed bottom-6 right-6 z-[9999] translate-y-20 opacity-0 transition-all duration-500 max-w-sm glass p-4 rounded-2xl flex items-start gap-4 border-primary/20 shadow-2xl">
+    <div class="p-2 bg-primary/10 rounded-xl text-primary"><i data-lucide="eye" class="w-5 h-5"></i></div>
+    <div>
+      <h4 class="font-bold text-sm text-white">Ordinal Counter Activated</h4>
+      <p class="text-xs text-slate-400 mt-0.5">Welcome! You are the <strong class="text-primary" id="toast-visit-count">147th</strong> visitor to checkout my space today.</p>
+    </div>
+  </div>
+
+  <!-- CORE SCRIPTS & TRANSITION LOGIC -->
+  <script>
+    // Initial State Variables
+    let databaseFetched = false;
+    let visitCount = 147;
+    
+    // Services Mock Data (Matches what is saved in Supabase site_content/what_i_do)
+    let servicesData = {
+      services: [
+        {
+          icon: "Code",
+          title: "Web Development",
+          desc: "Creating high-tier, interactive, and fast frontend experiences with modern stacks."
+        },
+        {
+          icon: "Terminal",
+          title: "Discord Bots",
+          desc: "Custom bot development for moderation, economy, and server utilities."
+        },
+        {
+          icon: "Server",
+          title: "Server Setup",
+          desc: "Professional Discord server design, role hierarchies, and permission management."
+        }
+      ],
+      footerText: "Currently accepting new clients! And the best part? I don't charge anything for now."
+    };
+
+    // Projects Mock Data
+    const projectsData = [
+      {
+        title: "Regis Core UI",
+        description: "Premium animated gaming interface built with Next.js, Framer Motion and optimized assets.",
+        tags: ["Next.js", "Framer Motion", "Glow System"],
+        image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&auto=format&fit=crop"
+      },
+      {
+        title: "Moderation Node Bot",
+        description: "Discord client system hosting complete administrative commands, ticket logs, and API filters.",
+        tags: ["Node.js", "Discord.js", "Redis"],
+        image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500&auto=format&fit=crop"
+      },
+      {
+        title: "NASH Preloader API",
+        description: "Autonomous microservice managing loading screen parameters and custom flying transition endpoints.",
+        tags: ["React 19", "GSAP", "Vite"],
+        image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=500&auto=format&fit=crop"
+      }
+    ];
+
+    // Reviews Mock Data
+    let mockReviews = [
+      {
+        id: 1,
+        rating: 5,
+        content: "MatNash built my server's administration bot from scratch! Absolute genius. Speed and security are premium-tier.",
+        username: "AlexDev",
+        avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop",
+        date: "2026-05-18"
+      },
+      {
+        id: 2,
+        rating: 5,
+        content: "Highly responsive developer. The transitions on our custom site are extremely smooth and beautiful.",
+        username: "QuantumCode",
+        avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100&auto=format&fit=crop",
+        date: "2026-05-12"
+      },
+      {
+        id: 3,
+        rating: 4,
+        content: "Professional-grade setup, permissions, and roles are fully organized. Best Discord specialist I've met.",
+        username: "ShadowWalker",
+        avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop",
+        date: "2026-05-09"
+      }
+    ];
+
+    let selectedRating = 5;
+
+    // Trigger on Load
+    window.addEventListener('DOMContentLoaded', () => {
+      // Initialize icons
+      lucide.createIcons();
+      
+      // Load initial services & projects UI
+      renderServices();
+      renderProjects();
+      renderReviews();
+      renderAdminReviews();
+      
+      // Sync Admin Forms
+      document.getElementById('editor-title').value = "MatNashPlays";
+      document.getElementById('editor-tagline').value = "Developer & Hobbyist";
+      document.getElementById('editor-desc').value = "I build custom systems, high-tier Discord interfaces, and interactive online portfolios. Explore my professional catalog or edit this site contents in real time using the custom sandbox CMS.";
+      document.getElementById('editor-services-json').value = JSON.stringify(servicesData, null, 2);
+      
+      // Simulate Database load
+      simulateDatabaseLoad();
+    });
+
+    // 1. SIMULATE LOADING FLOW (Preloader to PFP Flight)
+    function simulateDatabaseLoad() {
+      const statusText = document.getElementById('preloader-status');
+      
+      // Fake loading milestones
+      setTimeout(() => { statusText.innerText = "Resolving supabase credentials..."; }, 800);
+      setTimeout(() => { statusText.innerText = "Merging visitor auditor metrics..."; }, 1600);
+      setTimeout(() => { statusText.innerText = "Synchronizing live CMS JSON config..."; }, 2400);
+      
+      // Ready trigger
+      setTimeout(() => {
+        statusText.innerText = "Launch sequence ready!";
+        triggerCinematicTransition();
+      }, 3200);
+
+      // Timeout safety indicator
+      setTimeout(() => {
+        if (!databaseFetched) {
+          document.getElementById('timeout-warning').classList.remove('hidden');
+        }
+      }, 15000);
+    }
+
+    // 2. CINEMATIC PFP FLIGHT
+    function triggerCinematicTransition() {
+      databaseFetched = true;
+      const preloader = document.getElementById('preloader');
+      const initialPfp = document.getElementById('pfp-container-initial');
+      const flyingPfp = document.getElementById('flying-pfp');
+      const appContent = document.getElementById('app-content');
+      const targetSpot = document.getElementById('pfp-target-spot');
+      
+      // Get positions
+      const initialRect = initialPfp.getBoundingClientRect();
+      
+      // Set initial inline coordinates for flying PFP
+      flyingPfp.style.left = `${initialRect.left}px`;
+      flyingPfp.style.top = `${initialRect.top}px`;
+      flyingPfp.style.width = `${initialRect.width}px`;
+      flyingPfp.style.height = `${initialRect.height}px`;
+      
+      // Reveal flying PFP & fade out preloader elements except background
+      flyingPfp.classList.remove('hidden');
+      initialPfp.style.visibility = 'hidden';
+      preloader.style.opacity = '0';
+      
+      // Allow scroll & trigger full content reveal
+      document.body.classList.remove('no-scroll');
+      appContent.style.opacity = '1';
+
+      setTimeout(() => {
+        // Find destination location coordinates inside home view
+        const targetRect = targetSpot.getBoundingClientRect();
+        
+        // Flight translation
+        flyingPfp.style.left = `${targetRect.left}px`;
+        flyingPfp.style.top = `${targetRect.top}px`;
+        flyingPfp.style.width = `${targetRect.width}px`;
+        flyingPfp.style.height = `${targetRect.height}px`;
+        
+        // Hide preloader overlay completely
+        setTimeout(() => {
+          preloader.classList.add('hidden');
+        }, 800);
+      }, 1000);
+
+      // Snap Flying PFP into the home layout and hide flying clone
+      setTimeout(() => {
+        targetSpot.innerHTML = `
+          <div class="w-full h-full rounded-full overflow-hidden p-1 bg-gradient-to-br from-primary to-accent glow-border">
+            <img src="https://github.com/NashCodes77/Regis/blob/main/images/matnashplays.png?raw=true" alt="Matched" class="w-full h-full rounded-full object-cover"/>
+          </div>
+        `;
+        flyingPfp.classList.add('hidden');
+        
+        // Trigger cascading entry of text block
+        triggerHomeStaggerReveal();
+      }, 2200);
+    }
+
+    // 3. HOME STAGGER ENTRANCE
+    function triggerHomeStaggerReveal() {
+      const elements = document.querySelectorAll('.fade-up-element');
+      elements.forEach((el, index) => {
+        setTimeout(() => {
+          el.classList.add('active');
+        }, index * 150);
+      });
+
+      // Show ordinal notification toast
+      setTimeout(() => {
+        showOrdinalToast();
+      }, 1000);
+    }
+
+    // 4. NAVIGATION MANAGER
+    function navigateTo(pageId) {
+      // Update Navbar selection UI
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        if (btn.getAttribute('data-page') === pageId) {
+          btn.classList.add('text-primary', 'bg-primary/10');
+          btn.classList.remove('hover:bg-white/5');
+        } else {
+          btn.classList.remove('text-primary', 'bg-primary/10');
+          btn.classList.add('hover:bg-white/5');
+        }
+      });
+
+      // Transition Page containers
+      document.querySelectorAll('.page-section').forEach(sec => {
+        sec.classList.remove('active');
+      });
+
+      const activePage = document.getElementById(`page-${pageId}`);
+      if (activePage) {
+        activePage.classList.add('active');
+      }
+
+      // Scroll to top cleanly
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 5. RENDERING UTILITIES
+    function renderServices() {
+      const container = document.getElementById('services-container');
+      const footerContainer = document.getElementById('work-footer-container');
+      
+      container.innerHTML = "";
+      
+      servicesData.services.forEach((service, idx) => {
+        let lucideIcon = "code";
+        if (service.icon === "Terminal") lucideIcon = "terminal";
+        if (service.icon === "Server") lucideIcon = "server";
+        if (service.icon === "Briefcase") lucideIcon = "briefcase";
+
+        container.innerHTML += `
+          <div class="glass p-8 rounded-2xl h-full flex flex-col items-start group hover:-translate-y-2 transition-transform duration-300 border border-white/5 hover:border-primary/50 glow-border">
+            <div class="p-4 bg-primary/10 rounded-xl mb-6 group-hover:scale-110 group-hover:bg-primary/20 transition-all duration-300 text-primary">
+              <i data-lucide="${lucideIcon}" class="w-8 h-8"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-3 font-display">${service.title}</h3>
+            <p class="text-slate-400 text-sm leading-relaxed flex-1">${service.desc}</p>
+          </div>
+        `;
+      });
+
+      footerContainer.innerHTML = `
+        <div class="p-6 bg-primary/5 rounded-2xl border border-primary/20 text-md relative overflow-hidden group glow">
+          <div class="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <span class="text-slate-300 font-medium">${servicesData.footerText}</span>
+        </div>
+      `;
+
+      lucide.createIcons();
+    }
+
+    function renderProjects() {
+      const grid = document.getElementById('projects-grid');
+      grid.innerHTML = "";
+
+      projectsData.forEach((proj) => {
+        let tagsHtml = proj.tags.map(t => `<span class="text-xs bg-white/5 border border-white/10 px-2.5 py-1 rounded-full text-slate-300 font-mono">${t}</span>`).join('');
+        
+        grid.innerHTML += `
+          <div class="glass rounded-2xl overflow-hidden border border-white/5 hover:border-primary/40 group hover:-translate-y-1.5 transition-all duration-300 flex flex-col">
+            <div class="h-48 overflow-hidden relative">
+              <img src="${proj.image}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="${proj.title}"/>
+              <div class="absolute inset-0 bg-gradient-to-t from-background to-transparent opacity-60"></div>
+            </div>
+            <div class="p-6 flex-1 flex flex-col">
+              <h3 class="text-xl font-bold font-display text-white mb-2 group-hover:text-primary transition-colors">${proj.title}</h3>
+              <p class="text-slate-400 text-xs leading-relaxed mb-6 flex-1">${proj.description}</p>
+              <div class="flex flex-wrap gap-2 mt-auto">
+                ${tagsHtml}
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function renderReviews() {
+      const track = document.getElementById('reviews-marquee-track');
+      if (!track) return;
+      track.innerHTML = "";
+
+      const renderCard = (review, idx, suffix) => {
+        let starsHtml = "";
+        for (let i = 1; i <= 5; i++) {
+          if (i <= review.rating) {
+            starsHtml += `<i data-lucide="star" class="w-3.5 h-3.5 text-amber-400 fill-amber-400"></i>`;
+          } else {
+            starsHtml += `<i data-lucide="star" class="w-3.5 h-3.5 text-slate-600"></i>`;
+          }
+        }
+
+        return `
+          <div key="${suffix}-${idx}" class="glass p-6 rounded-2xl w-[320px] flex-shrink-0 flex flex-col justify-between border border-white/5 hover:border-primary/40 hover:glass-strong transition-all duration-300">
+            <div>
+              <div class="flex gap-1 mb-3">
+                ${starsHtml}
+              </div>
+              <p class="text-slate-300 text-sm italic mb-4 leading-relaxed line-clamp-3">"${review.content}"</p>
+            </div>
+            <div class="flex items-center gap-3 border-t border-white/10 pt-3">
+              <div class="w-8 h-8 rounded-full bg-slate-800 overflow-hidden border border-white/10 flex-shrink-0">
+                <img src="${review.avatar}" alt="User" class="w-full h-full object-cover" />
+              </div>
+              <div class="flex flex-col">
+                <span class="text-xs font-semibold text-white">${review.username}</span>
+                <span class="text-[10px] text-slate-500">${review.date}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      };
+
+      let trackHtml = "";
+      mockReviews.forEach((review, idx) => {
+        trackHtml += renderCard(review, idx, "t1");
+      });
+      mockReviews.forEach((review, idx) => {
+        trackHtml += renderCard(review, idx, "t2");
+      });
+
+      track.innerHTML = trackHtml;
+      lucide.createIcons();
+    }
+
+    // 6. CMS SIMULATOR & INTERACTIVE FUNCTIONS
+    function updateHeroPreview() {
+      const title = document.getElementById('editor-title').value;
+      const tagline = document.getElementById('editor-tagline').value;
+      const desc = document.getElementById('editor-desc').value;
+
+      document.getElementById('cms-title').innerText = title;
+      document.getElementById('cms-tagline').innerText = tagline;
+      document.getElementById('cms-description').innerText = desc;
+    }
+
+    function saveServicesFromAdmin() {
+      const rawJson = document.getElementById('editor-services-json').value;
+      try {
+        const parsed = JSON.parse(rawJson);
+        if (parsed.services && Array.isArray(parsed.services)) {
+          servicesData = parsed;
+          renderServices();
+          alert("✅ Live CMS update applied immediately to 'Work' section!");
+        } else {
+          alert("❌ Missing 'services' array parameter inside input JSON.");
+        }
+      } catch (e) {
+        alert("❌ Invalid JSON code framework formatting.");
+      }
+    }
+
+    function renderAdminReviews() {
+      const container = document.getElementById('admin-reviews-list');
+      if (!container) return;
+      container.innerHTML = "";
+
+      if (mockReviews.length === 0) {
+        container.innerHTML = `<p class="text-slate-400 text-xs italic">No reviews found.</p>`;
+        return;
+      }
+
+      mockReviews.forEach((review) => {
+        let starsHtml = "";
+        for (let i = 1; i <= 5; i++) {
+          if (i <= review.rating) {
+            starsHtml += `<i data-lucide="star" class="w-3.5 h-3.5 text-amber-400 fill-amber-400"></i>`;
+          } else {
+            starsHtml += `<i data-lucide="star" class="w-3.5 h-3.5 text-slate-600"></i>`;
+          }
+        }
+
+        container.innerHTML += `
+          <div class="p-4 bg-white/5 border border-white/10 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-4 animate-fade-in">
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 rounded-full bg-slate-800 overflow-hidden border border-white/10 flex-shrink-0">
+                <img src="${review.avatar}" alt="User" class="w-full h-full object-cover" />
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-sm font-bold text-white">${review.username}</span>
+                  <span class="text-xs text-slate-500">${review.date}</span>
+                </div>
+                <div class="flex gap-0.5 my-1">
+                  ${starsHtml}
+                </div>
+                <p class="text-xs text-slate-300 italic">"${review.content}"</p>
+              </div>
+            </div>
+            <div class="flex gap-2 self-end md:self-center flex-shrink-0">
+              <button onclick="editReviewFromAdmin(${review.id})" class="px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors">
+                <i data-lucide="edit-2" class="w-3 h-3"></i> Edit
+              </button>
+              <button onclick="deleteReviewFromAdmin(${review.id})" class="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors">
+                <i data-lucide="trash-2" class="w-3 h-3"></i> Delete
+              </button>
+            </div>
+          </div>
+        `;
+      });
+      lucide.createIcons();
+    }
+
+    function editReviewFromAdmin(id) {
+      const review = mockReviews.find(r => r.id === id);
+      if (!review) return;
+
+      document.getElementById('edit-review-id').value = review.id;
+      document.getElementById('edit-review-rating').value = review.rating;
+      document.getElementById('edit-review-content').value = review.content;
+
+      const form = document.getElementById('admin-edit-review-form');
+      form.classList.remove('hidden');
+      form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function saveReviewFromAdmin() {
+      const id = parseInt(document.getElementById('edit-review-id').value);
+      const rating = parseInt(document.getElementById('edit-review-rating').value);
+      const content = document.getElementById('edit-review-content').value;
+
+      if (!content.trim()) {
+        alert("Please enter review content.");
+        return;
+      }
+
+      const index = mockReviews.findIndex(r => r.id === id);
+      if (index !== -1) {
+        mockReviews[index].rating = rating;
+        mockReviews[index].content = content;
+
+        // Re-render both lists
+        renderReviews();
+        renderAdminReviews();
+
+        // Hide form
+        cancelEditReviewFromAdmin();
+        alert("✅ Live CMS update applied immediately to Server Reviews marquee!");
+      }
+    }
+
+    function deleteReviewFromAdmin(id) {
+      if (confirm("Are you sure you want to delete this review permanently?")) {
+        mockReviews = mockReviews.filter(r => r.id !== id);
+
+        // Re-render both lists
+        renderReviews();
+        renderAdminReviews();
+
+        // If editing deleted review, cancel edit
+        const editIdVal = document.getElementById('edit-review-id').value;
+        if (editIdVal && parseInt(editIdVal) === id) {
+          cancelEditReviewFromAdmin();
+        }
+      }
+    }
+
+    function cancelEditReviewFromAdmin() {
+      document.getElementById('admin-edit-review-form').classList.add('hidden');
+      document.getElementById('edit-review-id').value = "";
+      document.getElementById('edit-review-content').value = "";
+    }
+
+    // 7. TOAST NOTIFICATION UTILITIES
+    function showOrdinalToast() {
+      const toast = document.getElementById('visit-toast');
+      const countLabel = document.getElementById('toast-visit-count');
+      
+      // Set ordinal count display
+      countLabel.innerText = getOrdinalSuffix(visitCount);
+      
+      // Toast entrance
+      toast.style.transform = 'translateY(0)';
+      toast.style.opacity = '1';
+
+      // Auto dismiss
+      setTimeout(() => {
+        toast.style.transform = 'translateY(20px)';
+        toast.style.opacity = '0';
+      }, 6000);
+    }
+
+    function getOrdinalSuffix(i) {
+      var j = i % 10, k = i % 100;
+      if (j == 1 && k != 11) return i + "st";
+      if (j == 2 && k != 12) return i + "nd";
+      if (j == 3 && k != 13) return i + "rd";
+      return i + "th";
+    }
+
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      alert("📨 Message sent successfully! Simulated database record generated.");
+      e.target.reset();
+    }
+  </script>
+</body>
+</html>
